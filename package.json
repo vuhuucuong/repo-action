@@ -6,6 +6,11 @@
   "author": "Cuong Vu <vuhuucuong1310@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@octokit/rest": "^17.1.0",
+    "dotenv": "^8.2.0",
     "nodegit": "^0.26.5"
+  },
+  "scripts": {
+    "test": "node index.js"
   }
 }
