@@ -29,8 +29,7 @@ jobs:
           --url ${API_GITHUB_ENDPOINT}/repos/${OWNER}/${REPO}/releases/tags/${CURRENT_TAG} \
           --header "authorization: Basic ${GH_TOKEN}" \
           | jq ".name" \
-          | xargs -I CURRENT_RELEASE_NAME \
-          | echo "::set-env name=CURRENT_RELEASE_NAME::CURRENT_RELEASE_NAME"
+          | xargs -I CURRENT_RELEASE_NAME echo "::set-env name=CURRENT_RELEASE_NAME::CURRENT_RELEASE_NAME"
       - name: Echo
         run: echo $CURRENT_TAG $CURRENT_TAG
       # - uses: actions/checkout@v2
