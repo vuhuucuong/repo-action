@@ -35,7 +35,7 @@ jobs:
         run: echo $CURRENT_TAG $CURRENT_RELEASE_NAME
 
       - name: Run script
-        if: endsWith($CURRENT_RELEASE_NAME, '_released')
+        if: endsWith(env.CURRENT_RELEASE_NAME, '_released')
         run: echo $CURRENT_TAG $CURRENT_RELEASE_NAME
     # - uses: actions/checkout@v2
     # - name: Use Node.js
