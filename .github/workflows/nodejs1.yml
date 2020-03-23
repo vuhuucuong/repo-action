@@ -64,7 +64,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: reapit/foundations-documentation
-          token: ${{ env.GH_TOKEN }}
           path: foundations-documentation
 
       - name: Run script
