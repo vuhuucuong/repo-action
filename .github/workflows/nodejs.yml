@@ -18,6 +18,7 @@ jobs:
       - name: Install jq
         run: |
           sudo apt-get install jq
+
       - name: Get current tags
         run: echo "::set-env name=CURRENT_TAG::${GITHUB_REF#refs/tags/}"
 
@@ -38,6 +39,5 @@ jobs:
           node-version: '12.x'
       - name: Install depedencies
         run: npm install
-      - name: Check out
       - name: Run script
         run: echo $GITHUB_REF
