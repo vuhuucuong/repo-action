@@ -25,9 +25,13 @@ jobs:
       - name: Get current release name (title)
         run: |
           curl -s \
-          --request GET --url "${API_GITHUB_ENDPOINT}/repos/${OWNER}/${REPO}/releases/tags/${CURRENT_TAG}" --header "authorization: Basic ${GH_TOKEN}" | jq ".name" | xargs -I {} echo "{}"
+          --request GET \
+          --url "${API_GITHUB_ENDPOINT}/repos/${OWNER}/${REPO}/releases/tags/${CURRENT_TAG}" \
+          --header "authorization: Basic ${GH_TOKEN}" \
+          | jq ".name" \
+          | xargs -I {} echo "::set-env name=CURRENT_RELEASE_NAME::{}"
       - name: Echo
-        run: echo $CURRENT_TAG $CURRENT_TAG
+        run: echo $CURRENT_TAG $CURRENT_RELEASE_NAME
       # - uses: actions/checkout@v2
       # - name: Use Node.js
       #   uses: actions/setup-node@v1
