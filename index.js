@@ -6,6 +6,8 @@ const octokit = new Octokit({
 })
 
 const getLatestRelease = async () => {
-  console.log(process.env.GH_RELEASE)
+
+
+  const ock
 }
 getLatestRelease()

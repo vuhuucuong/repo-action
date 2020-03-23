@@ -6,12 +6,31 @@ on:
 
 env:
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
+  API_GITHUB_ENDPOINT: 'https://api.github.com'
+  OWNER: 'vuhuucuong'
+  REPO: 'repo-action'
 
 jobs:
-  build:
+  release-note:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Install jq
+        run: |
+          sudo apt-get install jq
+      - name: Get current tags
+        run: echo "::set-env name=CURRENT_TAG::${GITHUB_REF#refs/tags/}"
+
+      - name: Get current release name (title)
+        run: |
+          curl -s \
+          --request GET \
+          --url ${API_GITHUB_ENDPOINT}/repos/${OWNER}/${REPO}/releases/tags/${CURRENT_TAG} \
+          --header 'authorization: Basic ${GH_TOKEN}' \
+          | jq ".name" \
+          | xargs -I CURRENT_TAG
+          | echo "::set-env name=CURRENT_TAG::CURRENT_TAG"
+
       - uses: actions/checkout@v2
       - name: Use Node.js
         uses: actions/setup-node@v1
@@ -19,6 +38,6 @@ jobs:
           node-version: '12.x'
       - name: Install depedencies
         run: npm install
+      - name: Check out
       - name: Run script
         run: echo $GITHUB_REF
-
