@@ -8,7 +8,7 @@ env:
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
   API_GITHUB_ENDPOINT: https://api.github.com
   MAIN_REPO: vuhuucuong/repo-action
-  DOC_REPO: vuhuucuong/repo-md
+  DOC_REPO: vuhuucuong/foundations-documentation
 
 jobs:
   create-pr-update-doc:
@@ -63,7 +63,7 @@ jobs:
         if: endsWith(env.CURRENT_RELEASE_NAME, '_released')
         uses: actions/checkout@v2
         with:
-          repository: reapit/foundations-documentation
+          repository: ${{ env.DOC_REPO }}
           path: foundations-documentation
 
       - name: Run script
