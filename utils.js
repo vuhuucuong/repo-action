@@ -2,6 +2,7 @@ const fs = require('fs')
 const readline = require('readline')
 const { Readable } = require('stream')
 const fsPromises = fs.promises
+const Git = require('nodegit')
 
 /**
  * Temporary create two file
@@ -88,18 +89,24 @@ const insertIntoLine = async ({ path, line, content }) => {
   }
 }
 
-insertIntoLine({
-  path: './aml-checklist.md',
-  line: 9,
-  content: `
-Release: foundations-ts-definitions_v0.0.75
-Rollback: foundations-ts-definitions_v0.0.74
-Changes:
-commit | author |description
-  
-- 49efd7305e14ae8e74ed9cbf76b59041f4cbca90 | Github Actions <GithubActions@email.com> | chore: update TypeScript definition - time stamp: 2020-02-20
+const cloneGitRepo = async () => {
+  const git = await Git.Clone('git@github.com:vuhuucuong/repo-md.git')
+  console.log('ad', git)
+}
+cloneGitRepo()
 
-approver: @willmcvay
-monitor: https://sentry.io/organizations/reapit-ltd/projects/
-`,
-})
+// insertIntoLine({
+//   path: './aml-checklist.md',
+//   line: 9,
+//   content: `
+// Release: foundations-ts-definitions_v0.0.75
+// Rollback: foundations-ts-definitions_v0.0.74
+// Changes:
+// commit | author |description
+
+// - 49efd7305e14ae8e74ed9cbf76b59041f4cbca90 | Github Actions <GithubActions@email.com> | chore: update TypeScript definition - time stamp: 2020-02-20
+
+// approver: @willmcvay
+// monitor: https://sentry.io/organizations/reapit-ltd/projects/
+// `,
+// })

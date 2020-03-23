@@ -7,15 +7,15 @@ on:
 env:
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
   API_GITHUB_ENDPOINT: https://api.github.com
-  OWNER: vuhuucuong
-  REPO: repo-action
+  MAIN_REPO: vuhuucuong/repo-action
+  DOC_REPO: vuhuucuong/repo-md
 
 jobs:
   create-pr-update-doc:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install jq
+      - name: Install jq (json parser)
         run: |
           sudo apt-get install jq
 
@@ -26,7 +26,7 @@ jobs:
         run: |
           curl -s \
           --request GET \
-          --url "${API_GITHUB_ENDPOINT}/repos/${OWNER}/${REPO}/releases/tags/${CURRENT_TAG}" \
+          --url "${API_GITHUB_ENDPOINT}/repos/${MAIN_REPO}/releases/tags/${CURRENT_TAG}" \
           --header "authorization: Basic ${GH_TOKEN}" \
           | jq ".name" \
           | xargs -I {} echo "::set-env name=CURRENT_RELEASE_NAME::{}"
@@ -59,6 +59,15 @@ jobs:
         if: endsWith(env.CURRENT_RELEASE_NAME, '_released')
         run: yarn install --frozen-lockfile
 
+      - name: Git Clone foundations-documentation repo
+        if: endsWith(env.CURRENT_RELEASE_NAME, '_released')
+        uses: actions/checkout@v2
+        with:
+          repository: $DOC_REPO
+          token: $GH_TOKEN
+          path: foundations-documentation
+
       - name: Run script
         if: endsWith(env.CURRENT_RELEASE_NAME, '_released')
-        run: echo $CURRENT_TAG $CURRENT_RELEASE_NAME
+        run: |
+          ls ./foundations-documentation
