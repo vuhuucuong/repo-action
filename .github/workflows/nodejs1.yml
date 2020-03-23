@@ -63,8 +63,8 @@ jobs:
         if: endsWith(env.CURRENT_RELEASE_NAME, '_released')
         uses: actions/checkout@v2
         with:
-          repository: env.DOC_REPO
-          token: env.GH_TOKEN
+          repository: ${{ env.DOC_REPO }}
+          token: ${{ env.GH_TOKEN }}
           path: foundations-documentation
 
       - name: Run script
