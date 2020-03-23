@@ -27,8 +27,7 @@ jobs:
           curl -s \
           --request GET \
           --url ${API_GITHUB_ENDPOINT}/repos/${OWNER}/${REPO}/releases/tags/${CURRENT_TAG} \
-          --header "authorization: Basic ${GH_TOKEN}" \
-          | jq ".name" \
+          --header "authorization: Basic ${GH_TOKEN}"
       - name: Echo
         run: echo $CURRENT_TAG $CURRENT_TAG
       # - uses: actions/checkout@v2
