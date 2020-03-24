@@ -125,9 +125,11 @@ const getReleaseAndCreatePr = async releaseTag => {
     const prTitle = `${releaseTag} - Document Update`
     execSync(
       `cd ${docRepoPath} && \
+    git config user.name "Will McVay" && \
+    git config user.email "wmcvay@reapit.com" && \
     git checkout -b ${releaseTag} && \
     git add ${newFilePath} && \
-    git commit --author="Will McVay <wmcvay@reapit.com>" -m "${prTitle}" && \
+    git commit -m "${prTitle}" && \
     git push -u origin HEAD
       `,
     )
