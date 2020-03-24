@@ -92,66 +92,6 @@ const insertIntoLine = async ({ path, line, content }) => {
   return path
 }
 
-const getReleaseAndCreatePr = async releaseTag => {
-  try {
-    const packageName = releaseTag.replace(/_v.+/, '')
-
-    const [owner, repo] = process.env.MAIN_REPO.split('/')
-    const [ownerDoc, repoDoc] = process.env.DOC_REPO.split('/')
-
-    const octokit = new Octokit({
-      auth: process.env.GH_PAT,
-      baseUrl: process.env.API_GITHUB_ENDPOINT,
-    })
-    const {
-      data: { body, name, published_at: publishedAt },
-    } = await octokit.repos.getReleaseByTag({
-      owner,
-      repo,
-      tag: releaseTag,
-    })
-
-    const formattedContent = `### ${name} - ${dayjs(publishedAt).format('YYYY-MM-DD')}
-  ${body}
-    `
-    const docRepoPath = process.env.DOC_CLONE_PATH
-    const inputObj = mapPackageNameToPathLine({ docRepoPath, packageName })
-    if (!inputObj) {
-      throw 'No package name matched!'
-    }
-    const { path, line } = inputObj
-
-    const newFilePath = await insertIntoLine({ path, line, content: formattedContent })
-    const prTitle = `${releaseTag} - Document Update`
-    console.log('Executing git commands...')
-    execSync(
-      `cd ${docRepoPath} && \
-    git remote set-url origin git@github.com:$DOC_REPO
-    git config user.name "Will McVay" && \
-    git config user.email "wmcvay@reapit.com" && \
-    git checkout -b ${releaseTag} && \
-    git add ${newFilePath} && \
-    git commit -m "${prTitle}" && \
-    git push -u origin HEAD
-      `,
-    )
-    const {
-      data: { html_url },
-    } = await octokit.pulls.create({
-      owner: ownerDoc,
-      repo: repoDoc,
-      title: prTitle,
-      head: releaseTag,
-      base: 'master',
-    })
-    console.log(`Created a PR at: ${html_url}`)
-    return 'Success'
-  } catch (err) {
-    console.error('An error happened!')
-    throw err
-  }
-}
-
 const mapPackageNameToPathLine = ({ docRepoPath, packageName }) => {
   const basePath = path.join(docRepoPath, 'change-logs')
   switch (packageName) {
@@ -227,6 +167,73 @@ const mapPackageNameToPathLine = ({ docRepoPath, packageName }) => {
       }
     default:
       return null
+  }
+}
+
+/**
+ * Flow:
+ * 1. Get releaseTag from Github Action
+ * 2. Extract packageName from releaseTag
+ * 3. Get release title, body, date using github API
+ * 4. 
+ */
+const getReleaseAndCreatePr = async releaseTag => {
+  try {
+    const packageName = releaseTag.replace(/_v.+/, '')
+
+    const [owner, repo] = process.env.MAIN_REPO.split('/')
+    const [ownerDoc, repoDoc] = process.env.DOC_REPO.split('/')
+
+    const octokit = new Octokit({
+      auth: process.env.GH_PAT,
+      baseUrl: process.env.API_GITHUB_ENDPOINT,
+    })
+    const {
+      data: { body, name, published_at: publishedAt },
+    } = await octokit.repos.getReleaseByTag({
+      owner,
+      repo,
+      tag: releaseTag,
+    })
+
+    const formattedContent = `### ${releaseTag} - ${dayjs(publishedAt).format('YYYY-MM-DD')}
+  ${body}
+    `
+    const docRepoPath = process.env.DOC_CLONE_PATH
+    const inputObj = mapPackageNameToPathLine({ docRepoPath, packageName })
+    if (!inputObj) {
+      throw 'No package name matched!'
+    }
+    const { path, line } = inputObj
+
+    const newFilePath = await insertIntoLine({ path, line, content: formattedContent })
+    const prTitle = `${releaseTag} - Document Update`
+    console.log('Executing git commands...')
+    execSync(
+      `cd ${docRepoPath} && \
+    git remote set-url origin git@github.com:$DOC_REPO
+    git config user.name "Will McVay" && \
+    git config user.email "wmcvay@reapit.com" && \
+    git checkout -b ${releaseTag} && \
+    git add ${newFilePath} && \
+    git commit -m "${prTitle}" && \
+    git push -u origin HEAD
+      `,
+    )
+    const {
+      data: { html_url },
+    } = await octokit.pulls.create({
+      owner: ownerDoc,
+      repo: repoDoc,
+      title: prTitle,
+      head: releaseTag,
+      base: 'master',
+    })
+    console.log(`Created a PR at: ${html_url}`)
+    return 'Success'
+  } catch (err) {
+    console.error('An error happened!')
+    throw err
   }
 }
 

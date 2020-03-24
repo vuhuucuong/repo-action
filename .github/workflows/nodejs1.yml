@@ -60,10 +60,10 @@ jobs:
           repository: ${{ env.DOC_REPO }}
           path: ${{ env.DOC_CLONE_PATH }}
 
-      - name: Set up SSH Auth
-        uses: webfactory/ssh-agent@v0.2.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      # - name: Set up SSH Auth
+      #   uses: webfactory/ssh-agent@v0.2.0
+      #   with:
+      #     ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Run script
         if: endsWith(env.CURRENT_RELEASE_NAME, '_released')
