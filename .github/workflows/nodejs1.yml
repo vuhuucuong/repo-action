@@ -50,7 +50,8 @@ jobs:
 
       - name: Install depedencies
         if: endsWith(env.CURRENT_RELEASE_NAME, '_released')
-        run: yarn install --frozen-lockfile
+        run: |
+          cd $MAIN_CLONE_PATH && yarn install --frozen-lockfile
 
       - name: Checking out foundations-documentation repo
         if: endsWith(env.CURRENT_RELEASE_NAME, '_released')
