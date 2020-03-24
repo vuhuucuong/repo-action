@@ -174,8 +174,12 @@ const mapPackageNameToPathLine = ({ docRepoPath, packageName }) => {
  * Flow:
  * 1. Get releaseTag from Github Action
  * 2. Extract packageName from releaseTag
- * 3. Get release title, body, date using github API
- * 4. 
+ * 3. Get release title, body, date from releaseTag using github API
+ * 4. Format content
+ * 5. Get { path, line } object to .md file based on in package (line is where content is inserted, this way, newer release notes always come first)
+ * 6. Insert content into line
+ * 7. git add -> git commit -> git push (with releaseTag as branch name)
+ * 8. Create PR using Github API
  */
 const getReleaseAndCreatePr = async releaseTag => {
   try {
@@ -220,6 +224,7 @@ const getReleaseAndCreatePr = async releaseTag => {
     git push -u origin HEAD
       `,
     )
+    console.log(`Pushed to ${releaseTag}, creating PR...`)
     const {
       data: { html_url },
     } = await octokit.pulls.create({
@@ -229,7 +234,7 @@ const getReleaseAndCreatePr = async releaseTag => {
       head: releaseTag,
       base: 'master',
     })
-    console.log(`Created a PR at: ${html_url}`)
+    console.log(`Success! A PR has been created at: ${html_url}`)
     return 'Success'
   } catch (err) {
     console.error('An error happened!')
