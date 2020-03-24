@@ -6,6 +6,7 @@ const Git = require('nodegit')
 const { Octokit } = require('@octokit/rest')
 const dayjs = require('dayjs')
 const Git = require('nodegit')
+const path = require('path')
 
 /**
  * Temporary create two file with content separated by <line>
@@ -118,10 +119,12 @@ const getReleaseAndCreatePr = async ({ releaseTag }) => {
 }
 
 const mapPackageNameToPathLine = (packageName) => {
+  const basePath = process.env.DOC_CLONE_PATH,
   switch (packageName) {
-    case 'elements':
+    case 'aml-checklist':
       return {
-        path: process.env.DOC_CLONE_PATH,
+        path: path.join(basePath, )
+        line:
       }
       break;
     
