@@ -125,6 +125,7 @@ const getReleaseAndCreatePr = async releaseTag => {
     const prTitle = `${releaseTag} - Document Update`
     execSync(
       `cd ${docRepoPath} && \
+    git remote set-url origin https://reapit:${GH_PAT}@github.com/${DOC_REPO}.git && \
     git config user.name "Will McVay" && \
     git config user.email "wmcvay@reapit.com" && \
     git checkout -b ${releaseTag} && \
