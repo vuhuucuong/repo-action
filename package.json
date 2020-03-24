@@ -12,6 +12,6 @@
     "nodegit": "^0.26.5"
   },
   "scripts": {
-    "test": "node index.js"
+    "test": "node utils.js"
   }
 }

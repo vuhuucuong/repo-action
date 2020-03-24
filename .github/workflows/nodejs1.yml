@@ -62,4 +62,4 @@ jobs:
       - name: Run script
         if: endsWith(env.CURRENT_RELEASE_NAME, '_released')
         run: |
-          ls $DOC_CLONE_PATH
+          yarn test
