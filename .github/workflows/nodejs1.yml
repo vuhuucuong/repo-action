@@ -22,7 +22,7 @@ jobs:
       - name: Get current tags
         run: |
           echo "::set-env name=CURRENT_TAG::${GITHUB_REF#refs/tags/}" && \
-          echo "CURRENT_TAG is ${CURRENT_TAG}"
+          echo "CURRENT_TAG is ${GITHUB_REF#refs/tags/}"
 
       - name: Get current release name (title)
         run: |
@@ -31,8 +31,7 @@ jobs:
           --url "${API_GITHUB_ENDPOINT}/repos/${MAIN_REPO}/releases/tags/${CURRENT_TAG}" \
           --header "authorization: Basic ${GH_PAT}" \
           | jq ".name" \
-          | xargs -I {} echo "::set-env name=CURRENT_RELEASE_NAME::{}" && \
-          echo "CURRENT_RELEASE_NAME is ${CURRENT_RELEASE_NAME}"
+          | xargs -I {} echo "::set-env name=CURRENT_RELEASE_NAME::{}"
 
       - name: Checking out foundation repo to $GITHUB_WORKSPACE
         if: endsWith(env.CURRENT_RELEASE_NAME, '_released')
