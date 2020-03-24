@@ -126,6 +126,7 @@ const getReleaseAndCreatePr = async releaseTag => {
     console.log('Executing git commands...')
     execSync(
       `cd ${docRepoPath} && \
+    git remote set-url origin git@github.com:$DOC_REPO
     git config user.name "Will McVay" && \
     git config user.email "wmcvay@reapit.com" && \
     git checkout -b ${releaseTag} && \
