@@ -31,7 +31,7 @@ jobs:
           --url "${API_GITHUB_ENDPOINT}/repos/${MAIN_REPO}/releases/tags/${CURRENT_TAG}" \
           --header "authorization: Basic ${GH_PAT}" \
           | jq ".name" \
-          | xargs -I {} echo "::set-env name=CURRENT_RELEASE_NAME::{}"
+          | xargs -I {} echo "{}"
 
       - name: Checking out foundation repo to $GITHUB_WORKSPACE
         if: endsWith(env.CURRENT_RELEASE_NAME, '_released')
