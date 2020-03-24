@@ -11,12 +11,16 @@ env:
   MAIN_CLONE_PATH: foundation
   DOC_REPO: vuhuucuong/foundations-documentation
   DOC_CLONE_PATH: foundations-documentation
+  CURRENT_WORKING_DIR: ${{ github.workspace }}
 
 jobs:
   create-pr-update-doc:
     runs-on: ubuntu-latest
 
     steps:
+      - name: PWD
+        run: echo $CURRENT_WORKING_DIR
+
       - name: Install jq (json parser)
         run: |
           sudo apt-get install jq
