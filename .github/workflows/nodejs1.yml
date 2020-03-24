@@ -5,7 +5,7 @@ on:
     types: [published, edited]
 
 env:
-  GH_TOKEN: ${{ secrets.GH_TOKEN }}
+  GH_PAT: ${{ secrets.GH_PAT }}
   API_GITHUB_ENDPOINT: https://api.github.com
   MAIN_REPO: vuhuucuong/repo-action
   DOC_REPO: vuhuucuong/foundations-documentation
@@ -27,7 +27,7 @@ jobs:
           curl -s \
           --request GET \
           --url "${API_GITHUB_ENDPOINT}/repos/${MAIN_REPO}/releases/tags/${CURRENT_TAG}" \
-          --header "authorization: Basic ${GH_TOKEN}" \
+          --header "authorization: Basic ${GH_PAT}" \
           | jq ".name" \
           | xargs -I {} echo "::set-env name=CURRENT_RELEASE_NAME::{}"
 
@@ -64,9 +64,9 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: ${{ env.DOC_REPO }}
-          path: foundations-documentation
+          path: ${{ env.DOC_CLONE_PATH }}
 
       - name: Run script
         if: endsWith(env.CURRENT_RELEASE_NAME, '_released')
         run: |
-          ls ./foundations-documentation
+          ls $DOC_CLONE_PATH

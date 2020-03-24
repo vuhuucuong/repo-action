@@ -3,12 +3,15 @@ const readline = require('readline')
 const { Readable } = require('stream')
 const fsPromises = fs.promises
 const Git = require('nodegit')
+const { Octokit } = require('@octokit/rest')
+const dayjs = require('dayjs')
+const Git = require('nodegit')
 
 /**
- * Temporary create two file
+ * Temporary create two file with content separated by <line>
  *
  * @param {{path: string, line: number}} object
- * @return {Promise<{headFilePath: string, tailFilePath: string}>} n
+ * @return {Promise<{headFilePath: string, tailFilePath: string}>}
  */
 const createHeadAndTailTempFiles = ({ path, line }) =>
   new Promise((resolve, reject) => {
@@ -50,13 +53,13 @@ const createHeadAndTailTempFiles = ({ path, line }) =>
   })
 
 /**
- * Insert <content> into file at <line> number,
+ * Insert <content> into file at <line> number, and remove temporary files
  * This mechanism is able to handle big file
  *
- * @param {{path: string, line: number, content: string}} object
- * @return {Promise<undefined>} n
+ * @param {{path: string, line: number, content: string}} inputObj
+ * @return {Promise<string>} path of file with new content
  */
-const insertIntoLine = async ({ path, line, content }) => {
+const insertIntoLineAndRemoveTempFiles = async ({ path, line, content }) => {
   try {
     const { headFilePath, tailFilePath } = await createHeadAndTailTempFiles({ path, line })
     const [headStream, tailStream] = [fs.createReadStream(headFilePath), fs.createReadStream(tailFilePath)]
@@ -77,23 +80,57 @@ const insertIntoLine = async ({ path, line, content }) => {
       tailStream.pipe(newFileWriteStream, { end: true })
     })
 
-    newFileWriteStream.on('finish', async () => {
-      ;[headStream, contentStream, tailStream, newFileWriteStream].forEach(stream => stream.destroy())
-      // remove temp files
-      await Promise.all([fsPromises.unlink(headFilePath), fsPromises.unlink(tailFilePath)])
-      console.log('Succeed')
-    })
+    const newFileWriteStreamHandler = () =>
+      new Promise(resolve => {
+        newFileWriteStream.on('finish', async () => {
+          ;[headStream, contentStream, tailStream, newFileWriteStream].forEach(stream => stream.destroy())
+          // remove temp files
+          await Promise.all([fsPromises.unlink(headFilePath), fsPromises.unlink(tailFilePath)])
+          resolve('Success')
+        })
+      })
+    await newFileWriteStreamHandler()
+    return path
   } catch (err) {
     console.err('An error happened!\n')
     throw err
   }
 }
 
-const cloneGitRepo = async () => {
-  const git = await Git.Clone('git@github.com:vuhuucuong/repo-md.git')
-  console.log('ad', git)
+const getReleaseAndCreatePr = async ({ releaseTag }) => {
+  const octokit = new Octokit({
+    auth: process.env.GH_PAT,
+    baseUrl: process.env.API_GITHUB_ENDPOINT,
+  })
+  const packageName = releaseTag.replace(/_v.+/, '')
+  const [owner, repo] = process.env.MAIN_REPO.split('/')
+  const {
+    data: { body, name, published_at: publishedAt },
+  } = await octokit.repos.getReleaseByTag({
+    owner,
+    repo,
+    tag: releaseTag,
+  })
+  const formattedBody = `### ${name} - ${dayjs(publishedAt).format('YYYY-MM-DD')}
+  ${body}
+  `
+  const 
 }
-cloneGitRepo()
+
+const mapPackageNameToPathLine = (packageName) => {
+  switch (packageName) {
+    case 'elements':
+      return {
+        path: process.env.DOC_CLONE_PATH,
+      }
+      break;
+    
+    default:
+      
+  }
+}
+
+getReleaseAndCreatePr({ releaseTag: 'elements_v1.0.20' })
 
 // insertIntoLine({
 //   path: './aml-checklist.md',
