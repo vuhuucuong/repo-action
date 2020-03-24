@@ -119,7 +119,7 @@ const getReleaseAndCreatePr = async ({ releaseTag }) => {
 }
 
 const mapPackageNameToPathLine = (packageName) => {
-  const basePath = path.join( process.env.DOC_CLONE_PATH ),
+  const basePath = path.resolve( process.env.CURRENT_WORKING_DIR, process.env.DOC_CLONE_PATH ),
   switch (packageName) {
     case 'aml-checklist':
       return {

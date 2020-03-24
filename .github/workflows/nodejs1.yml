@@ -8,19 +8,15 @@ env:
   GH_PAT: ${{ secrets.GH_PAT }}
   API_GITHUB_ENDPOINT: https://api.github.com
   MAIN_REPO: vuhuucuong/repo-action
-  MAIN_CLONE_PATH: foundation
+  MAIN_CLONE_PATH: ${{ github.workspace }}/foundations
   DOC_REPO: vuhuucuong/foundations-documentation
-  DOC_CLONE_PATH: foundations-documentation
-  CURRENT_WORKING_DIR: ${{ github.workspace }}
+  DOC_CLONE_PATH: ${{ github.workspace }}/foundations-documentation
 
 jobs:
   create-pr-update-doc:
     runs-on: ubuntu-latest
 
     steps:
-      - name: PWD
-        run: echo $CURRENT_WORKING_DIR
-
       - name: Install jq (json parser)
         run: |
           sudo apt-get install jq
@@ -39,7 +35,7 @@ jobs:
           | jq ".name" \
           | xargs -I {} echo "::set-env name=CURRENT_RELEASE_NAME::{}"
 
-      - name: Checking out foundation repo to $GITHUB_WORKSPACE
+      - name: Checking out foundations repo
         if: endsWith(env.CURRENT_RELEASE_NAME, '_released')
         uses: actions/checkout@v2
         with:
@@ -56,7 +52,7 @@ jobs:
         if: endsWith(env.CURRENT_RELEASE_NAME, '_released')
         run: yarn install --frozen-lockfile
 
-      - name: Git Clone foundations-documentation repo
+      - name: Checking out foundations-documentation repo
         if: endsWith(env.CURRENT_RELEASE_NAME, '_released')
         uses: actions/checkout@v2
         with:
