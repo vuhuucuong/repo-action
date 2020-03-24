@@ -92,6 +92,12 @@ const insertIntoLine = async ({ path, line, content }) => {
   return path
 }
 
+/**
+ * Get path, line to .md file based on packageName
+ *
+ * @param {{docRepoPath: string, packageName: string}} inputObj
+ * @return {null| {path: string, line: number}}
+ */
 const mapPackageNameToPathLine = ({ docRepoPath, packageName }) => {
   const basePath = path.join(docRepoPath, 'change-logs')
   switch (packageName) {
@@ -176,7 +182,7 @@ const mapPackageNameToPathLine = ({ docRepoPath, packageName }) => {
  * 2. Extract packageName from releaseTag
  * 3. Get release title, body, date from releaseTag using github API
  * 4. Format content
- * 5. Get { path, line } object to .md file based on in package (line is where content is inserted, this way, newer release notes always come first)
+ * 5. Get { path, line } object to .md file based on packageName (line is where content is inserted, this way, newer release notes always come first)
  * 6. Insert content into line
  * 7. git add -> git commit -> git push (with releaseTag as branch name)
  * 8. Create PR using Github API
