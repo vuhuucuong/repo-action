@@ -123,9 +123,9 @@ const getReleaseAndCreatePr = async releaseTag => {
 
     const newFilePath = await insertIntoLine({ path, line, content: formattedContent })
     const prTitle = `${releaseTag} - Document Update`
+    console.log('Executing git commands...')
     execSync(
       `cd ${docRepoPath} && \
-    git remote set-url origin https://reapit:${process.env.GH_PAT}@github.com/${process.env.DOC_REPO}.git && \
     git config user.name "Will McVay" && \
     git config user.email "wmcvay@reapit.com" && \
     git checkout -b ${releaseTag} && \
