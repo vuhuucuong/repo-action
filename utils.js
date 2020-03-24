@@ -92,7 +92,7 @@ const insertIntoLine = async ({ path, line, content }) => {
   return path
 }
 
-const getReleaseAndCreatePr = async ({ releaseTag }) => {
+const getReleaseAndCreatePr = async releaseTag => {
   try {
     const packageName = releaseTag.replace(/_v.+/, '')
 
@@ -226,20 +226,4 @@ const mapPackageNameToPathLine = ({ docRepoPath, packageName }) => {
   }
 }
 
-getReleaseAndCreatePr({ releaseTag: 'elements_v1.0.20' })
-
-// insertIntoLine({
-//   path: './aml-checklist.md',
-//   line: 9,
-//   content: `
-// Release: foundations-ts-definitions_v0.0.75
-// Rollback: foundations-ts-definitions_v0.0.74
-// Changes:
-// commit | author |description
-
-// - 49efd7305e14ae8e74ed9cbf76b59041f4cbca90 | Github Actions <GithubActions@email.com> | chore: update TypeScript definition - time stamp: 2020-02-20
-
-// approver: @willmcvay
-// monitor: https://sentry.io/organizations/reapit-ltd/projects/
-// `,
-// })
+getReleaseAndCreatePr(process.env.CURRENT_TAG)

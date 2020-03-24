@@ -62,4 +62,4 @@ jobs:
       - name: Run script
         if: endsWith(env.CURRENT_RELEASE_NAME, '_released')
         run: |
-          yarn test
+          cd $MAIN_CLONE_PATH && yarn test
